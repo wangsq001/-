@@ -1,0 +1,49 @@
+# 安装paddlepaddle,注意安装python3.9版本
+https://www.paddlepaddle.org.cn/install/quick?docurl=/documentation/docs/zh/install/conda/macos-conda.html
+
+# pip添加清华源
+python -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade pip
+pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 确认pip对应python3.9
+pip -V
+
+# 安装paddlehub
+pip install paddlehub
+
+# 测试
+import paddlehub
+paddlehub.server_check()
+# 如果可以连接远端PaddleHub-Server，则显示Request Hub-Server successfully。
+# 如果无法连接远端PaddleHub-Server，则显示Request Hub-Server unsuccessfully。
+
+# 代码实现添加标点
+'''
+Paddlehub给一段没有标点符号的文字加上合适的标点符号
+'''
+# 导入包
+import paddlehub as hub
+
+model = hub.Module(name='auto_punc', version='1.0.0')
+
+# 定义方法
+def addpunc(txtpath, savetxt):
+    f = open(txtpath, encoding = "utf-8")
+    # 输出读取到的数据
+    txtstr = f.read().split("\n")
+    punc_texts = model.add_puncs(txtstr)
+    f.close()
+    str1 = "\n".join(punc_texts)
+    print('转换成功:', str1)
+    with open(savetxt, "a", encoding='utf-8') as fc:
+        fc.write(str1)  # 写入文件
+        fc.write("\n\n")
+        fc.close()
+
+if __name__ == '__main__':
+    # 存放要加标点符号的文字
+    txtpath = r'~/Downloads/a.txt'
+    # 保存加号标点符号的文字
+    savetxt = r'~/Downloads/b.txt'
+    # 调用方法
+    addpunc(txtpath, savetxt)
